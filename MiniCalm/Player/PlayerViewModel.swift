@@ -12,6 +12,8 @@ final class PlayerViewModel {
     private let session: MeditationSession
     private let audioPlayerManager: AudioPlayerManager
     var onTimeUpdate: ((Double) -> Void)?
+    var playbackRate: Float = 1.0
+    var onPlaybackCompleted: (() -> Void)?
 
     init(
         session: MeditationSession,
@@ -48,6 +50,10 @@ final class PlayerViewModel {
         audioPlayerManager.startTimeObserver { [weak self] seconds in
             self?.onTimeUpdate?(seconds)
         }
+        
+        audioPlayerManager.onPlaybackCompleted { [weak self] in
+            self?.onPlaybackCompleted?()
+        }
     }
 
     func togglePlayPause() {
@@ -56,5 +62,10 @@ final class PlayerViewModel {
 
     var isPlaying: Bool {
         audioPlayerManager.isPlaying
+    }
+    
+    func setPlaybackSpeed(_ speed: Float) {
+        playbackRate = speed
+        audioPlayerManager.setPlaybackRate(speed)
     }
 }

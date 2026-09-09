@@ -9,7 +9,7 @@ import UIKit
 
 class PlayerViewController: UIViewController {
     private let session: MeditationSession
-    private let viewModel: PlayerViewModel
+    let viewModel: PlayerViewModel
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var artworkImageView: UIImageView!
@@ -64,6 +64,23 @@ class PlayerViewController: UIViewController {
 
             self.durationLabel.text = "-" + remainingText
         }
+        
+        viewModel.onPlaybackCompleted = { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            self.progressSlider.value = 0
+            self.currentTimeLabel.text = "00:00"
+
+            let durationText = TimeFormatter.string(
+                seconds: self.session.durationSeconds
+            )
+
+            self.durationLabel.text = "-" + durationText
+
+            self.updatePlayPauseButton()
+        }
 
         viewModel.loadAudio()
 
@@ -85,7 +102,7 @@ class PlayerViewController: UIViewController {
         progressSlider.maximumValue = Float(session.durationSeconds)
         progressSlider.value = 0
 
-        speedButton.setTitle("1.0x", for: .normal)
+        speedButton.setTitle("1x", for: .normal)
 
         updatePlayPauseButton()
     }
@@ -132,6 +149,47 @@ class PlayerViewController: UIViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
               self.updatePlayPauseButton()
           }
+    }
+    
+    @IBAction func speedButtonTapped(_ sender: UIButton) {
+        let alert = UIAlertController(
+            title: "Playback Speed",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        let speeds: [Float] = [1.0, 1.5, 2.0]
+
+        for speed in speeds {
+            let isSelected = speed == viewModel.playbackRate
+
+            let title = isSelected
+                ? "✓ \(speed)x"
+                : "\(speed)x"
+
+            let action = UIAlertAction(
+                title: title,
+                style: .default
+            ) { [weak self] _ in
+                guard let self = self else {
+                    return
+                }
+
+                self.viewModel.setPlaybackSpeed(speed)
+                self.speedButton.setTitle("\(speed)x", for: .normal)
+            }
+
+            alert.addAction(action)
+        }
+
+        alert.addAction(
+            UIAlertAction(
+                title: "Cancel",
+                style: .cancel
+            )
+        )
+
+        present(alert, animated: true)
     }
     
     private func updatePlayPauseButton() {
