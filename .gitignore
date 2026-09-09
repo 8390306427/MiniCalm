@@ -2,3 +2,5 @@
 # Xcode user data
 *.xcuserdatad/
 xcuserdata/
+.DS_Store
+Player/
