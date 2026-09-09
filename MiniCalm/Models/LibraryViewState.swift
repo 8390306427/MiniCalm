@@ -19,6 +19,7 @@ struct LibraryViewState {
         case loading
         case loaded
         case failed
+        case empty
     }
 
     var status: Status = .idle

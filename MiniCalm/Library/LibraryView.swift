@@ -7,17 +7,20 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct LibraryView: View {
 
     @State private var state = LibraryViewState()
+    @State private var selectedSession: MeditationSession?
 
     private let viewModel = LibraryViewModel()
 
     var body: some View {
 
         if #available(iOS 16.0, *) {
+
             NavigationStack {
-                
                 content
                     .navigationTitle("MiniCalm")
                     .task {
@@ -26,11 +29,24 @@ struct LibraryView: View {
                     .refreshable {
                         await loadSessions()
                     }
+                    .sheet(item: $selectedSession) { session in
+                        PlayerViewControllerWrapper(session: session)
+                    }
             }
+
         } else {
-            // Fallback on earlier versions
+
+            NavigationView {
+                content
+                    .navigationTitle("MiniCalm")
+                    .sheet(item: $selectedSession) { session in
+                        PlayerViewControllerWrapper(session: session)
+                    }
+            }
         }
     }
+
+    // MARK: - Content
 
     @ViewBuilder
     private var content: some View {
@@ -43,10 +59,15 @@ struct LibraryView: View {
         case .loaded:
             sessionList
 
+        case .empty:
+            emptyView
+
         case .failed:
             errorView
         }
     }
+
+    // MARK: - Skeleton
 
     private var skeletonList: some View {
 
@@ -58,6 +79,8 @@ struct LibraryView: View {
         .redacted(reason: .placeholder)
         .disabled(true)
     }
+
+    // MARK: - Session List
 
     private var sessionList: some View {
 
@@ -72,6 +95,28 @@ struct LibraryView: View {
         }
     }
 
+    // MARK: - Empty
+
+    private var emptyView: some View {
+
+        VStack(spacing: 16) {
+
+            Image(systemName: "music.note.list")
+                .font(.system(size: 40))
+
+            Text("No meditation sessions")
+                .font(.headline)
+
+            Text("There are currently no sessions available.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+    }
+
+    // MARK: - Error
+
     private var errorView: some View {
 
         VStack(spacing: 16) {
@@ -83,6 +128,7 @@ struct LibraryView: View {
                 .font(.headline)
 
             if let message = state.errorMessage {
+
                 Text(message)
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
@@ -90,6 +136,7 @@ struct LibraryView: View {
             }
 
             Button("Try Again") {
+
                 Task {
                     await loadSessions()
                 }
@@ -98,6 +145,8 @@ struct LibraryView: View {
         }
         .padding()
     }
+
+    // MARK: - Load Sessions
 
     private func loadSessions() async {
 
@@ -109,7 +158,10 @@ struct LibraryView: View {
         state = newState
     }
 
+    // MARK: - Open Player
+
     private func openPlayer(_ session: MeditationSession) {
-        // UIKit navigation will be added here.
+
+        selectedSession = session
     }
 }

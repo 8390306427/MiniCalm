@@ -52,13 +52,9 @@ struct SessionRowView: View {
 
     @ViewBuilder
     private var artwork: some View {
-
         if let artworkURL = session.artworkURL {
-
             AsyncImage(url: artworkURL) { phase in
-
                 switch phase {
-
                 case .success(let image):
                     image
                         .resizable()
@@ -75,14 +71,14 @@ struct SessionRowView: View {
                     placeholderArtwork
                 }
             }
-
+            .frame(width: 70, height: 70)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
         } else {
             placeholderArtwork
         }
     }
-
+    
     private var placeholderArtwork: some View {
-
         Image(systemName: "music.note")
             .frame(width: 70, height: 70)
             .background(.gray.opacity(0.15))
