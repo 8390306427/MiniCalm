@@ -37,32 +37,58 @@ class PlayerViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         print("PLAYER SESSION:")
         print("Title:", session.title)
         print("Artwork URL:", session.artworkURL as Any)
+
         self.loadArtwork()
         self.setupUI()
-        viewModel.loadAudio()
-        print("Selected session: \(session.title)")
-    }
 
-    private func setupUI() {
+        viewModel.onTimeUpdate = { [weak self] seconds in
+            guard let self = self else {
+                return
+            }
 
-            titleLabel.text = session.title
-            teacherLabel.text = session.teacher
+            self.progressSlider.value = Float(seconds)
 
-            currentTimeLabel.text = "00:00"
-
-            durationLabel.text = TimeFormatter.string(
-                seconds: session.durationSeconds
+            self.currentTimeLabel.text = TimeFormatter.string(
+                seconds: seconds
             )
 
-            progressSlider.minimumValue = 0
-            progressSlider.maximumValue = Float(session.durationSeconds)
-            progressSlider.value = 0
+            let remainingTime = Double(self.session.durationSeconds) - seconds
 
-            speedButton.setTitle("1.0x", for: .normal)
+            let remainingText = TimeFormatter.string(
+                seconds: max(0, remainingTime)
+            )
+
+            self.durationLabel.text = "-" + remainingText
         }
+
+        viewModel.loadAudio()
+
+        print("Selected session:", session.title)
+    }
+    
+    private func setupUI() {
+        titleLabel.text = session.title
+        teacherLabel.text = session.teacher
+        currentTimeLabel.text = "00:00"
+
+        let durationText = TimeFormatter.string(
+            seconds: session.durationSeconds
+        )
+
+        durationLabel.text = "-" + durationText
+
+        progressSlider.minimumValue = 0
+        progressSlider.maximumValue = Float(session.durationSeconds)
+        progressSlider.value = 0
+
+        speedButton.setTitle("1.0x", for: .normal)
+
+        updatePlayPauseButton()
+    }
     
     private func loadArtwork() {
         guard let url = session.artworkURL else {
@@ -96,14 +122,23 @@ class PlayerViewController: UIViewController {
         }
     }
     
+    @IBAction func progressSliderValueChanged(_ sender: UISlider) {
+        viewModel.seek(to: Double(sender.value))
+    }
+    
     @IBAction func playPauseButtonTapped(_ sender: UIButton) {
    
         viewModel.togglePlayPause()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+              self.updatePlayPauseButton()
+          }
+    }
+    
+    private func updatePlayPauseButton() {
+        let imageName = viewModel.isPlaying ? "pause.fill" : "play.fill"
 
-        sender.setTitle(
-            viewModel.isPlaying ? "❚❚" : "▶",
-            for: .normal
-        )
+            let image = UIImage(systemName: imageName)
+            playPauseButton.setImage(image, for: .normal)
     }
 
 }

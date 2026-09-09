@@ -14,7 +14,7 @@
                 <outlet property="artworkImageView" destination="FPr-lC-CMa" id="Ktr-mK-iKC"/>
                 <outlet property="currentTimeLabel" destination="exR-tA-R07" id="U0a-hx-HFM"/>
                 <outlet property="durationLabel" destination="mHG-9I-7fT" id="3ue-Bt-vsU"/>
-                <outlet property="playPauseButton" destination="SKW-p8-Olx" id="f3t-q2-VuJ"/>
+                <outlet property="playPauseButton" destination="SKW-p8-Olx" id="ITu-GE-Pzt"/>
                 <outlet property="progressSlider" destination="9ce-gt-njy" id="D80-13-Lco"/>
                 <outlet property="speedButton" destination="oox-v7-9aA" id="43y-yM-BYK"/>
                 <outlet property="teacherLabel" destination="H4C-5L-HKK" id="LSf-sv-P8A"/>
@@ -48,6 +48,9 @@
                 </label>
                 <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="9ce-gt-njy">
                     <rect key="frame" x="75" y="396.66666666666669" width="243" height="34"/>
+                    <connections>
+                        <action selector="progressSliderValueChanged:" destination="-1" eventType="valueChanged" id="ldR-e9-DGZ"/>
+                    </connections>
                 </slider>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="exR-tA-R07">
                     <rect key="frame" x="35" y="403.66666666666669" width="40" height="20"/>
@@ -75,7 +78,7 @@
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SKW-p8-Olx">
                             <rect key="frame" x="0.0" y="0.0" width="58.333333333333336" height="34.333333333333336"/>
                             <state key="normal" title="Button"/>
-                            <buttonConfiguration key="configuration" style="plain" image="play.fill" catalog="system"/>
+                            <buttonConfiguration key="configuration" style="plain"/>
                             <connections>
                                 <action selector="playPauseButtonTapped:" destination="-1" eventType="touchUpInside" id="Ie9-YS-v84"/>
                             </connections>
@@ -111,7 +114,6 @@
         </view>
     </objects>
     <resources>
-        <image name="play.fill" catalog="system" width="120" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

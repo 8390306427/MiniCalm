@@ -11,6 +11,7 @@ final class PlayerViewModel {
 
     private let session: MeditationSession
     private let audioPlayerManager: AudioPlayerManager
+    var onTimeUpdate: ((Double) -> Void)?
 
     init(
         session: MeditationSession,
@@ -31,6 +32,10 @@ final class PlayerViewModel {
     var durationSeconds: Int {
         session.durationSeconds
     }
+    
+    func seek(to seconds: Double) {
+        audioPlayerManager.seek(to: seconds)
+    }
 
     func loadAudio() {
         guard let audioURL = session.audioURL else {
@@ -39,6 +44,10 @@ final class PlayerViewModel {
         }
 
         audioPlayerManager.load(url: audioURL)
+        
+        audioPlayerManager.startTimeObserver { [weak self] seconds in
+            self?.onTimeUpdate?(seconds)
+        }
     }
 
     func togglePlayPause() {
