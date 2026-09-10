@@ -101,10 +101,41 @@ class PlayerViewController: UIViewController {
         progressSlider.minimumValue = 0
         progressSlider.maximumValue = Float(session.durationSeconds)
         progressSlider.value = 0
-
+        setUpSpeedButton()
+        updatePlayPauseButton()
+    }
+    
+    private func setUpSpeedButton() {
         speedButton.setTitle("1x", for: .normal)
 
-        updatePlayPauseButton()
+        speedButton.setImage(
+            UIImage(systemName: "chevron.down"),
+            for: .normal
+        )
+
+        speedButton.titleLabel?.font = UIFont.systemFont(
+            ofSize: 18,
+            weight: .semibold
+        )
+
+        speedButton.tintColor = .black
+
+        // Arrow on the right
+        speedButton.semanticContentAttribute = .forceRightToLeft
+
+        // Space between speed label and arrow
+        speedButton.imageEdgeInsets = UIEdgeInsets(
+            top: 0,
+            left: 8,
+            bottom: 0,
+            right: -8
+        )
+
+        // Black border
+        speedButton.layer.borderWidth = 1
+        speedButton.layer.borderColor = UIColor.black.cgColor
+        speedButton.layer.cornerRadius = 8
+        speedButton.clipsToBounds = true
     }
     
     private func loadArtwork() {
@@ -146,8 +177,9 @@ class PlayerViewController: UIViewController {
     @IBAction func playPauseButtonTapped(_ sender: UIButton) {
    
         viewModel.togglePlayPause()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-              self.updatePlayPauseButton()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self = self else { return }
+            self.updatePlayPauseButton()
           }
     }
     
@@ -192,11 +224,27 @@ class PlayerViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    private func updatePlayPauseButton() {
+    func updatePlayPauseButton() {
         let imageName = viewModel.isPlaying ? "pause.fill" : "play.fill"
 
-            let image = UIImage(systemName: imageName)
-            playPauseButton.setImage(image, for: .normal)
-    }
+        let configuration = UIImage.SymbolConfiguration(
+            pointSize: 30,
+            weight: .bold
+        )
 
+        let image = UIImage(
+            systemName: imageName,
+            withConfiguration: configuration
+        )
+
+        playPauseButton.setImage(image, for: .normal)
+        playPauseButton.tintColor = .label
+        playPauseButton.layer.borderWidth = 1
+        playPauseButton.layer.borderColor = UIColor.black.cgColor
+        playPauseButton.layer.cornerRadius = 8
+        playPauseButton.clipsToBounds = true
+    }
+    @IBAction func backBtnTapped(_ sender: Any) {
+        self.dismiss(animated: true)
+    }
 }

@@ -29,7 +29,7 @@ struct LibraryView: View {
                     .refreshable {
                         await loadSessions()
                     }
-                    .sheet(item: $selectedSession) { session in
+                    .fullScreenCover(item: $selectedSession) { session in
                         PlayerViewControllerWrapper(session: session)
                     }
             }
@@ -39,7 +39,7 @@ struct LibraryView: View {
             NavigationView {
                 content
                     .navigationTitle("MiniCalm")
-                    .sheet(item: $selectedSession) { session in
+                    .fullScreenCover(item: $selectedSession) { session in
                         PlayerViewControllerWrapper(session: session)
                     }
             }
