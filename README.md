@@ -40,8 +40,11 @@ The application implementation, integration, testing, and final code decisions w
 
 Known Considerations
 
-* The provided API uses picsum.photos for artwork URLs.
-* Picsum may return different artwork when the library is refreshed or when the same artwork URL is requested again from another screen.
-* As a result, the artwork displayed in the Library and Player may differ even though the selected meditation session and artwork URL are the same.
-* The application intentionally uses the provided API data without modifying it.
-* In a production environment, stable CDN image URLs and image caching would be recommended to ensure consistent artwork across screens and refreshes.
+Artwork Consistency
+
+- The provided API uses `picsum.photos` for artwork URLs.
+- Picsum may return different artwork when the library is refreshed or when the same artwork URL is requested again from another screen.
+- **As a result, the artwork displayed in the Library and Player may be different, even though the selected meditation session and artwork URL are the same.**
+- This is a behavior of the provided artwork service and is not caused by the session selection or navigation logic.
+- The application intentionally uses the provided API data without modifying it.
+- In a production environment, I would use stable CDN image URLs along with image caching to ensure consistent artwork across screens and refreshes.
